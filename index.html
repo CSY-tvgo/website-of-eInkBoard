@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, shrink-to-fit=no, width=device-width" name="viewport">
+    <title>eInkBoard Home Page</title>
+
+    <!-- CSS -->
+    <!-- Add Material font (Roboto) and Material icon as needed -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Add Material CSS, replace Bootstrap CSS -->
+    <link href="css/material.css" rel="stylesheet">
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Then Material JavaScript on top of Bootstrap JavaScript -->
+    <script src="js/material.js"></script>
+
+    <!-- Favicons -->
+    <meta content="#2196f3" name="theme-color">
+
+    <!-- CSS only for eINkBoard_web -->
+    <link href="css/eInkBoard_web.css" rel="stylesheet">
+    <style type="text/css">
+        .my-pic {
+            width: 80%;
+        }
+
+        .my-pic-widescreen {
+            width: 50%;
+        }
+
+        .my-temptext {
+            color: black;
+        }
+
+        .my-maincontent {
+            font-size: 1.5rem;
+            font-weight: 520;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .my-maincontent-widescreen {
+            font-size: 2.5vw;
+            font-weight: 520;
+        }
+
+        /* 这里还能填些仅供此页面使用的CSS */
+    </style>
+
+
+    <script>
+        window.onpageshow = function () {
+            if (document.documentElement.clientWidth > 800) {
+                $(".my-title").addClass("my-title-widescreen");
+                $(".my-subtitle").addClass("my-subtitle-widescreen");
+                $(".my-pic").addClass("my-pic-widescreen");
+                $(".my-maincontent").addClass("my-maincontent-widescreen");
+            }
+            else {
+                $(".my-title").removeClass("my-title-widescreen");
+                $(".my-subtitle").removeClass("my-subtitle-widescreen");
+                $(".my-pic").removeClass("my-pic-widescreen");
+                $(".my-maincontent").removeClass("my-maincontent-widescreen");
+            }
+        }
+        window.onresize = function () {
+            if (document.documentElement.clientWidth > 800) {
+                $(".my-title").addClass("my-title-widescreen");
+                $(".my-subtitle").addClass("my-subtitle-widescreen");
+                $(".my-pic").addClass("my-pic-widescreen");
+                $(".my-maincontent").addClass("my-maincontent-widescreen");
+            }
+            else {
+                $(".my-title").removeClass("my-title-widescreen");
+                $(".my-subtitle").removeClass("my-subtitle-widescreen");
+                $(".my-pic").removeClass("my-pic-widescreen");
+                $(".my-maincontent").removeClass("my-maincontent-widescreen");
+            }
+        }</script>
+</head>
+
+<body>
+    <header class="navbar my-navbar-fixed-top toolbar-waterfall">
+        <button aria-controls="navdrawerDefault" aria-expanded="false" aria-label="Toggle Navdrawer"
+            class="navbar-toggler mr-3" data-target="#navdrawerDefault" data-toggle="navdrawer">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="my-navbar-brand">
+            eInkBoard
+        </a>
+        <div class="ml-3">
+            <div class="dropdown">
+                <button aria-expanded="false" aria-haspopup="true" class="navbar-toggler" data-toggle="dropdown"
+                    id="doc-dropdown-follow" type="button">
+                    <i class="material-icons mx-auto">more_vert</i>
+                </button>
+                <div aria-labelledby="doc-dropdown-follow" class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-body" href="https://github.com/CSY-tvgo" target="_blank">
+                        <i class="material-icons mr-3">code</i>Follow me on GitHub</a>
+                    <a class="dropdown-item text-body" data-toggle="modal" data-target="#aboutUs">
+                        <i class="material-icons mr-3 text-danger">favorite</i>Made by Karbon</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(window).scroll(function () {
+                if ($(".navbar").offset().top > 0) {
+                    $(".my-navbar-fixed-top").addClass("my-navbar-fixed-top-show");
+                    $(".my-navbar-brand").addClass("my-navbar-brand-show");
+                }
+                else {
+                    $(".my-navbar-fixed-top").removeClass("my-navbar-fixed-top-show");
+                    $(".my-navbar-brand").removeClass("my-navbar-brand-show");
+                }
+            })</script>
+    </header>
+
+
+    <div class="jumbotron jumbotron-fluid my-banner">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <h1 class="my-title" id="doc-main-h1">eInkBoard</h1>
+                    <p class="font-weight-light my-subtitle">一种低功耗的电子告示板</p>
+                    <div class="d-flex flex-wrap">
+                        <a class="btn btn-lg my-btn-secondary mb-3 mr-3 my-color-bg-botton"
+                            href="http://www.socchina.net/" target="_blank">
+                            <i class="material-icons mr-2">code</i>2018年 NESDC 参赛作品
+                        </a>
+                        <a class="btn btn-lg btn-light mb-3" href="techreport.html">
+                            <i class="material-icons mr-2">attachment</i>查看技术报告
+                        </a>
+                    </div>
+                    <a class="text-white-hint typography-caption">本网页基于框架</a>
+                    <a class="text-white-hint typography-caption" href="http://daemonite.github.io/material/"
+                        target="_blank">
+                        Daemonite's Material UI</a>
+                    <a class="text-white-hint typography-caption">设计<br />背景图为开发者的摄影作品<br />东大路6号 电子电工大楼</a>
+                    <hr class="mb-0">
+                    <div class="d-flex flex-wrap justify-content-end">
+                        <a class="btn btn-outline-light btn-sm mt-3" href="https://github.com/CSY-tvgo" target="_blank">
+                            <i class="material-icons mr-2">code</i>Follow me on GitHub
+                        </a>
+                        <a class="btn btn-outline-light btn-sm mt-3" data-toggle="modal" data-target="#aboutUs">
+                            <i class="material-icons mr-2 text-danger">favorite</i>Made by Karbon
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-justify text-center my-maincontent">
+        低功耗、观感舒适
+        <br /> <br />
+        <img src="assets\index\appearanceOfHello.jpg" width="50%" class="img-fluid my-pic" alt="Responsive image">
+        <br /> <br />
+        使用便捷的电子告示板
+        <br /> <br />
+        <img src="assets\index\eInkBoardStructure.jpg" width="50%" class="img-fluid my-pic" alt="Responsive image">
+        <br /> <br />
+        低成本、高性能<br />
+        中天微® CK802 CPU
+        <br /> <br />
+        <a href="http://www.c-sky.com/solution/10670.htm" target="_blank">
+            <img src="assets\index\CK-802.png" width="50%" class="img-fluid my-pic" alt="Responsive image">
+        </a>
+        <br /> <br />
+        连接简单、稳定<br />
+        使用 NB-IoT™ 连接
+        <br /> <br />
+        <a href="https://www.gsma.com/iot/narrow-band-internet-of-things-nb-iot/" target="_blank">
+            <img src="assets\index\nbiot_black_rgb.jpg" width="50%" class="img-fluid my-pic" alt="Responsive image">
+        </a>
+        <br /> <br />
+        <a href="#top" class="my-temptext">
+            &nbsp&nbsp&nbsp想了解更多？<br />
+            点此返回顶部<br />
+            下载技术报告
+        </a>
+    </div>
+
+
+    <br /><br />
+    <footer class="ui-footer">
+        <a class="container d-flex justify-content-center my-color-text" href="https://github.com/CSY-tvgo"
+            target="_blank">
+            © Karbon </a>
+    </footer>
+
+
+
+    <!-- navdrawer -->
+    <div aria-hidden="true" class="navdrawer" id="navdrawerDefault" tabindex="-1">
+        <div class="navdrawer-content">
+            <div class="navdrawer-header">
+                <a class="navbar-brand px-0" href="#">eInkBoard</a>
+            </div>
+
+            <ul class="navdrawer-nav ">
+                <li class="nav-item">
+                    <a class="nav-link active my-color-text" href="index.html">
+                        <i class="material-icons mr-3">home</i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#controlError">
+                        <i class="material-icons mr-3">settings_remote</i>Post Notice</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#debugError">
+                        <i class="material-icons mr-3">build</i>Debug</a>
+                </li>
+            </ul>
+
+
+            <div class="navdrawer-divider"></div>
+            <p class="navdrawer-subheader">About</p>
+            <ul class="navdrawer-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="help.html">
+                        <i class="material-icons mr-3">help</i>Help</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="techreport.html">
+                        <i class="material-icons mr-3">attachment</i>Technical Report </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#aboutUs">
+                        <i class="material-icons mr-3 ">info</i>About Developers</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal (Post Notice Error) -->
+    <div class="modal fade" id="controlError" tabindex="-1" role="dialog" aria-labelledby="controlErrorTitle"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="controlErrorTitle">哪块eInkBoard？</h1>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <br />
+                    <i class="material-icons mr-3 d-flex justify-content-center">camera_enhance</i>
+                    <br />
+                    <h5>您可以扫描eInkBoard设备上的二维码来控制它。</h5>
+                    <br /><br />
+                    <i class="material-icons mr-3 d-flex justify-content-center">bookmarks</i>
+                    <br />
+                    <h5>或者，把扫描二维码后打开的网页网址记录下来，直接通过收藏夹打开该网页来控制设备。</h5>
+                    <br />
+                    <h5>再或者，也可以<a href="device/control/example.html">点此</a>查看示例控制页面。</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (Debug Error) -->
+    <div class="modal fade" id="debugError" tabindex="-1" role="dialog" aria-labelledby="debugErrorTitle"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title" id="debugErrorTitle">Are your a developer?</h1>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <br />
+                    <i class="material-icons mr-3 d-flex justify-content-center">build</i>
+                    <br /><br />
+                    <h5>调试功能仅限开发者使用。</h5>
+                    <br />
+                    <h5>或者，也可以<a href="device/debug/example.html">点此</a>查看示例调试页面。</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (About Us) -->
+    <div class="modal fade" id="aboutUs" tabindex="-1" role="dialog" aria-labelledby="aboutUsTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutUsTitle">About Us</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <img src="assets\others\authorphoto.jpg" width="50%" class="img-fluid" alt="Responsive image">
+                        <br />
+                        <h2>Karbon</h2>
+                        <h3>from SEUCXC</h3>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

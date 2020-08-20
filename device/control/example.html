@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<script lang="javascript">  // 这里填写登录和设备信息
+    var thisUserID = 'Example';
+    var thisUserPassword = 'Example';
+    var thisDeviceID = 'Example';
+    var recv00 = 0;
+</script>
+
+<head>
+    <link rel="shortcut icon" href="../../favicon.ico" />
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="initial-scale=1, shrink-to-fit=no, width=device-width" name="viewport">
+    <title>eInkBoard Post Notice</title>
+
+    <!-- CSS -->
+    <!-- Add Material font (Roboto) and Material icon as needed -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Add Material CSS, replace Bootstrap CSS -->
+    <link href="../../css/material.css" rel="stylesheet">
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <!-- Then Material JavaScript on top of Bootstrap JavaScript -->
+    <script src="../../js/material.js"></script>
+
+    <!-- Favicons -->
+    <meta content="#2196f3" name="theme-color">
+
+    <!-- CSS only for eINkBoard_web -->
+    <link href="../../css/eInkBoard_web.css" rel="stylesheet">
+    <style type="text/css">
+        .my-shellwidth {
+            -ms-flex: 0 0 83.333333%;
+            flex: 0 0 83.333333%;
+            max-width: 83.333333%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .my-buttonArea {
+            color: white;
+            float: right;
+        }
+
+        .my-querybutton {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .my-sendbutton {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .my-title-widescreen {
+            font-size: 8vw;
+            font-weight: 360;
+            letter-spacing: -.04em;
+            line-height: 1;
+        }
+
+        /* 这里还能填些仅供此页面使用的CSS */
+    </style>
+
+
+    <script lang="javascript">
+        function showConnecting() // 连接中显示的提示
+        {
+            $(".my-state-bgcolor").removeClass("my-state-bgcolor-connected");
+            $(".my-state-bgcolor").removeClass("my-state-bgcolor-connectFailed");
+            $("#connectState").text(' 连接中，等待设备回应...');
+            $("#connectStateIcon").text('link_off');
+        }
+
+        function showConnected() // 收到任意数据后表示连接成功
+        {
+            $(".my-state-bgcolor").removeClass("my-state-bgcolor-connectFailed");
+            $(".my-state-bgcolor").addClass("my-state-bgcolor-connected");
+            $("#connectStateIcon").text('link');
+            $("#connectState").text(' 已连接');
+        }
+
+        function showConnectFailed() // 连接失败的提示
+        {
+            $(".my-state-bgcolor").removeClass("my-state-bgcolor-connected");
+            $(".my-state-bgcolor").addClass("my-state-bgcolor-connectFailed");
+            $("#connectState").text(' 连接失败');
+            $("#connectStateIcon").text('link_off');
+            $('#connectErrorModal').modal('show');
+        }
+
+        window.onpageshow = function () {
+            if (document.documentElement.clientWidth > 800) {
+                $(".my-title").addClass("my-title-widescreen");
+                $(".my-subtitle").addClass("my-subtitle-widescreen");
+            }
+            else {
+                $(".my-title").removeClass("my-title-widescreen");
+                $(".my-subtitle").removeClass("my-subtitle-widescreen");
+            }
+            clearCounter();
+            connect();
+        }
+        window.onresize = function () {
+            if (document.documentElement.clientWidth > 800) {
+                $(".my-title").addClass("my-title-widescreen");
+                $(".my-subtitle").addClass("my-subtitle-widescreen");
+            }
+            else {
+                $(".my-title").removeClass("my-title-widescreen");
+                $(".my-subtitle").removeClass("my-subtitle-widescreen");
+            }
+        }</script>
+
+    <!-- NBIOT相关 -->
+    <script src="../mqttws31.js"></script>
+    <script src="../usrCloud.js"></script>
+    <!-- emailjs相关 -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.1.0/email.min.js"></script>
+</head>
+
+<body>
+    <header class="navbar my-navbar-fixed-top toolbar-waterfall">
+        <button aria-controls="navdrawerDefault" aria-expanded="false" aria-label="Toggle Navdrawer"
+            class="navbar-toggler mr-3" data-target="#navdrawerDefault" data-toggle="navdrawer">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="my-navbar-brand">
+            eInkBoard
+        </a>
+        <div class="ml-3">
+            <div class="dropdown">
+                <button aria-expanded="false" aria-haspopup="true" class="navbar-toggler" data-toggle="dropdown"
+                    id="doc-dropdown-follow" type="button">
+                    <i class="material-icons mx-auto">more_vert</i>
+                </button>
+                <div aria-labelledby="doc-dropdown-follow" class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item text-body" href="https://github.com/CSY-tvgo" target="blank">
+                        <i class="material-icons mr-3">code</i>Follow me on GitHub</a>
+                    <a class="dropdown-item text-body" data-toggle="modal" data-target="#aboutUs">
+                        <i class="material-icons mr-3 text-danger">favorite</i>Made by Karbon</a>
+                </div>
+            </div>
+        </div>
+        <script lang="javascript">
+            $(window).scroll(function () {
+                if ($(".navbar").offset().top > 0) {
+                    $(".my-navbar-fixed-top").addClass("my-navbar-fixed-top-show");
+                    $(".my-navbar-brand").addClass("my-navbar-brand-show");
+                }
+                else {
+                    $(".my-navbar-fixed-top").removeClass("my-navbar-fixed-top-show");
+                    $(".my-navbar-brand").removeClass("my-navbar-brand-show");
+                }
+            })</script>
+    </header>
+
+
+    <div class="jumbotron jumbotron-fluid my-banner">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <h1 class="my-title" id="doc-main-h1">Post Notice</h1>
+                    <p class="font-weight-light my-subtitle">Device ID:
+                        <script lang="javascript">
+                            document.write(thisDeviceID)
+                        </script>
+                        <br />
+                        <span class="chip my-state-bgcolor"><i class="material-icons">
+                                <span id="connectStateIcon" class='info'>link-off</span>
+                            </i>
+                            <span id="connectState" class='info'>网页加载中...</span>
+                        </span>
+                        <br />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面主体内容 -->
+    <div class="form-group my-shellwidth">
+        <div class="form-group">
+            <div class="floating-label">
+                <label for="userInputArea">在此填写署名</label>
+                <input class="form-control" id="userInputArea" placeholder="每个署名的告示只能同时存在一条" type="text"
+                    oninput="refreshInputCounter()">
+            </div>
+        </div>
+        <div class="floating-label textfield-box">
+            <label for="msgInputArea">在此填写你想张贴的告示</label>
+            <textarea class="form-control" id="msgInputArea" placeholder="只允许发送ASCII字符" rows="3"
+                oninput="refreshInputCounter()"></textarea>
+        </div>
+        <br />
+        <span id="inputCounter" class='info'>0/140</span>
+
+        <div class="my-buttonArea">
+            <a class="btn btn-lg btn-light mb-3 my-querybutton"
+                onclick="refreshInputCounter();confirmContent.value='/query notices'; publishRawToDev()">
+                <i class="material-icons mr-2">history</i>查询
+            </a>
+            <a class="btn btn-lg btn-light mb-3 my-sendbutton"
+                onclick="refreshInputCounter();$('#confirmModal').modal('show')">
+                <i class="material-icons mr-2">send</i>发送
+            </a>
+        </div>
+    </div>
+
+    <div class="form-group my-shellwidth">
+        <div class="textfield-box">
+            <label for="consoleNotice">控制台提示
+                <span id="dataCounter" class='info'>(已发送0条，已接收0条)</span>
+                <script lang="javascript">
+                    var sendCount = 0;
+                    var recvCount = 0;
+                    var nowtime;
+                    var year;
+                    var month;
+                    var date;
+                    var hour;
+                    var minute;
+                    var second;
+                    var timezone;
+                    var buf;
+                    function refreshInputCounter()  // 刷新输入计数
+                    {
+                        userInputArea.value = userInputArea.value.replace(/[^\x20-\x7E]/g, ''); // 排除非ASCII字符
+                        if (userInputArea.value.length > 20) // 限制字符长度
+                        {
+                            userInputArea.value = userInputArea.value.substr(0, 20);
+                        }
+                        msgInputArea.value = msgInputArea.value.replace(/[^\x20-\x7E]/g, ''); // 排除非ASCII字符
+                        if (msgInputArea.value.length > 140)  // 限制字符长度
+                        {
+                            msgInputArea.value = msgInputArea.value.substr(0, 140);
+                        }
+                        $("#inputCounter").text(msgInputArea.value.length + "/140");
+
+                        nowtime = new Date();
+                        year = PrefixInteger(nowtime.getFullYear(), 4);
+                        month = PrefixInteger(nowtime.getMonth() + 1, 2);
+                        date = PrefixInteger(nowtime.getDate(), 2);
+                        hour = PrefixInteger(nowtime.getHours(), 2);
+                        minute = PrefixInteger(nowtime.getMinutes(), 2);
+                        second = PrefixInteger(nowtime.getSeconds(), 2);
+                        millisecond = PrefixInteger(nowtime.getMilliseconds(), 3);
+                        timezone = PrefixInteger(-nowtime.getTimezoneOffset(), 4);
+                        buf = "UTC " + -nowtime.getTimezoneOffset() / 60 + "时区 " + month + "月" + date + "日 " + hour + ":" + minute;
+                        confirmTime.value = buf;
+                        queryTime.value = buf;
+                        confirmSignature.value = userInputArea.value;
+                        confirmContent.value = msgInputArea.value;
+                    }
+                    function refreshCounter()  // 刷新收发计数
+                    {
+                        $("#dataCounter").text("(已发送" + sendCount + "条，已接收" + recvCount + "条)");
+                    }
+                    function clearCounter()  // 清除收发计数
+                    {
+                        sendCount = 0;
+                        recvCount = 0;
+                        refreshCounter();
+                        consoleNotice.value = '';
+                    }
+                </script>
+                <a class="text-right" href="javascript:clearCounter()">清空</a>
+            </label>
+            <textarea class="form-control" id="consoleNotice" placeholder="" rows="15" readonly="readonly"></textarea>
+        </div>
+    </div>
+
+    <script lang="javascript">
+        function PrefixInteger(num, length) // 数字前面自动补0
+        {
+            return (Array(length).join('0') + num).slice(-length);
+        }
+
+        function getNowTime() // 获取当前时间
+        {
+            var nowtime = new Date();
+            var hh = nowtime.getHours();
+            var mm = nowtime.getMinutes();
+            var ss = nowtime.getSeconds();
+            var mls = nowtime.getMilliseconds();
+            return PrefixInteger(hh, 2) + ':' +
+                PrefixInteger(mm, 2) + ':' +
+                PrefixInteger(ss, 2) + ':' +
+                PrefixInteger(mls, 3) + ':';
+        }
+
+        function addConsoleNotice(newcontent) // 在控制台中输出新消息
+        {
+            consoleNotice.value = getNowTime() + "  " + newcontent + "\n" + consoleNotice.value;
+        }
+    </script>
+
+    <footer class="ui-footer">
+        <a class="container d-flex justify-content-center my-color-text" href="https://github.com/CSY-tvgo"
+            target="_blank">
+            © Karbon </a>
+    </footer>
+
+    <!-- navdrawer -->
+    <div aria-hidden="
+            true" class="navdrawer" id="navdrawerDefault" tabindex="-1">
+        <div class="navdrawer-content">
+            <div class="navdrawer-header">
+                <a class="navbar-brand px-0" href="#">eInkBoard</a>
+            </div>
+
+            <ul class="navdrawer-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="../../index.html" target="_blank">
+                        <i class="material-icons mr-3">home</i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active my-color-text" href="../control/example.html">
+                        <i class="material-icons mr-3">settings_remote</i>Post Notice</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../debug/example.html">
+                        <i class="material-icons mr-3">build</i>Debug</a>
+                </li>
+            </ul>
+
+            <div class="navdrawer-divider"></div>
+            <p class="navdrawer-subheader">About</p>
+            <ul class="navdrawer-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="../../help.html">
+                        <i class="material-icons mr-3">help</i>Help</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../techreport.html" target="_blank">
+                        <i class="material-icons mr-3">attachment</i>Technical Report </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#aboutUs">
+                        <i class="material-icons mr-3">info</i>About Developers</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal (About Us) -->
+    <div class="modal fade" id="aboutUs" tabindex="-1" role="dialog" aria-labelledby="aboutUsTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="aboutUsTitle">About Us</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <img src="..\..\assets\others\authorphoto.jpg" width="50%" class="img-fluid"
+                            alt="Responsive image">
+                        <br />
+                        <h2>Karbon</h2>
+                        <h3>from SEUCXC</h3>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (连接异常时的提示) -->
+    <div class="modal fade" id="connectErrorModal" tabindex="-1" role="dialog" aria-labelledby="connectErrorModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="connectErrorModalTitle">CONNECTION ERROR!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <s>与服务器连接出现异常，请刷新页面重新尝试连接。
+                        <br /> 如果仍然不行，请检查浏览器安全设置、或者联系开发者。</s>
+                    <br />
+                    <br />
+                    这是一个仅供浏览的演示页面，请关闭该提示继续浏览。
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-color-text-light" data-dismiss="modal">Close</button>
+                    <button type="button" onclick="location.reload(true)"
+                        class="btn my-color-text-dark">Refresh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (发送前的确认) -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">Confirm?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="confirmTime">发送时间</label>
+                        <input class="form-control" id="confirmTime" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmSignature">署名</label>
+                        <input class="form-control" id="confirmSignature" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmContent">发送内容</label>
+                        <textarea class="form-control" id="confirmContent" rows="3" readonly="readonly"></textarea>
+                    </div>
+                    <h5>请核对以上内容，确认要发送吗？</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-color-text-light" data-dismiss="modal">我再改改</button>
+                    <button type="button" onclick="$('#confirmModal').modal('hide');publishRawToDev();"
+                        class="btn my-color-text-dark">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (No Signature) -->
+    <div class="modal fade" id="signatureError" tabindex="-1" role="dialog" aria-labelledby="signatureErrorTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signatureErrorTitle">No Signature</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>无法发送，请填写署名。</h2>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (No Content) -->
+    <div class="modal fade" id="contentError" tabindex="-1" role="dialog" aria-labelledby="contentErrorTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contentErrorTitle">No Content</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>无法发送，请填写内容。</h2>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (告示已发送) -->
+    <div class="modal fade" id="noticeSentModal" tabindex="-1" role="dialog" aria-labelledby="noticeSentModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noticeSentModalTitle">Notice Sent.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>已发出。</h2>
+                        <br />通常需要10秒左右来张贴，请稍等。
+                        <br />若迟迟没有提示发送成功，请不要修改内容，直接点击发送按钮重新发送。
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (告示已确认张贴) -->
+    <div class="modal fade" id="noticePostedModal" tabindex="-1" role="dialog" aria-labelledby="noticePostedModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noticePostedModalTitle">Notice Posted.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>发送成功，已张贴。</h2>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (署名已存在，告示张贴失败) -->
+    <div class="modal fade" id="noticePostFailedModal" tabindex="-1" role="dialog"
+        aria-labelledby="noticePostFailedModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="noticePostFailedModalTitle">Notice Post Failed.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>告示张贴失败，该署名已张贴过。</h2>
+                        <br />若需要张贴其他告示，请修改署名。
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (queryCommandSend) -->
+    <div class="modal fade" id="queryCommandSend" tabindex="-1" role="dialog" aria-labelledby="queryCommandSendTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="queryCommandSendTitle">Query Command Sent.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>查询指令已发出，请稍等。</h2>
+                        <br />查询成功将自动弹出查询结果，未成功请重新点击查询按钮。
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (查询结果显示) -->
+    <div class="modal fade" id="queryResultModal" tabindex="-1" role="dialog" aria-labelledby="queryResultModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="queryResultModalTitle">查询成功</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="queryTime">查询时间</label>
+                        <input class="form-control" id="queryTime" readonly="readonly">
+                    </div>
+                    <div class="form-group">
+                        <label for="queryResult">屏幕上当前显示的内容</label>
+                        <textarea class="form-control" id="queryResult" rows="10" readonly="readonly"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (clearCommandSend) -->
+    <div class="modal fade" id="clearCommandSend" tabindex="-1" role="dialog" aria-labelledby="clearCommandSendTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clearCommandSendTitle">Clear Command Sent.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>清屏指令已发出。</h2>
+                        <br />若清屏失败请重新发送指令。
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (清屏确认成功的提示) -->
+    <div class="modal fade" id="clearConfirmedModal" tabindex="-1" role="dialog"
+        aria-labelledby="clearConfirmedModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clearConfirmedModalTitle">Cleared. </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <h2>清屏成功。</h2>
+                    </center>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn my-btn-secondary my-color-text" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script lang="javascript">
+
+        /**
+         * 登录
+         */
+        function connect() {
+            addConsoleNotice("与云平台连接中...");
+            usrCloud.USR_Connect(thisUserID, thisUserPassword);
+        }
+
+        /**
+         * 取消登录
+         */
+        function disConnect() {
+            usrCloud.USR_DisConnect();
+        }
+
+        /**
+         * 连接成功回调
+         */
+        function USR_onConnAck(event) {
+            console.log(event);
+            if (event.code == 0) {
+                addConsoleNotice("与云平台的连接已建立。");
+                subscribeDevRaw();
+            } else {
+                addConsoleNotice("与云平台连接失败。 (错误代码:" + event.code + ")");
+                showConnectFailed();
+            }
+        }
+
+        /**
+         * 连接丢失回调（云组态和云交换机共用）
+         */
+        function USR_onConnLost(event) {
+            console.log(event);
+            addConsoleNotice("与云平台的连接丢失。 (错误代码:" + event.code + ")");
+            showConnectFailed();
+        }
+
+        /**
+         * 订阅成功回调（云组态和云交换机共用）
+         */
+        function USR_onSubscribeAck(event) {
+            console.log(event);
+            //判断返回函数名
+            if (event.code === 0) {
+                addConsoleNotice("订阅设备成功。");
+                showConnecting();
+            } else {
+                addConsoleNotice("订阅设备失败。(错误代码:" + event.code + ")");
+                showConnectFailed();
+            }
+        }
+
+        /**
+         * 取消订阅成功回调（云组态和云交换机共用）
+         */
+        function USR_onUnSubscribeAck(event) {
+            console.log(event);
+            if (event.code === 0) {
+                addConsoleNotice("取消订阅设备成功。");
+            } else {
+                addConsoleNotice("取消订阅设备失败。 (错误代码:" + event.code + ")");
+            }
+        }
+
+        /**
+         * 接收设备原始数据流回调（云交换机）
+         */
+        function USR_onRcvRawFromDev(event) {
+            showConnected();
+            console.log(event);
+            if (recv00 == 0) {
+                addConsoleNotice("收到设备信息，与设备的连接已确认。");
+                recv00 = 1;
+            }
+            if (event.payload != 0) {
+                var recvStr = buf2str(event.payload);
+                var recvHex = buf2HexStr(event.payload)
+                recvCount++;
+                refreshCounter();
+                addConsoleNotice("收到设备反馈:\"" + recvStr + "\" ( 原始数据的十六进制码为:" + recvHex + ")");
+                var sigIndex = recvStr.indexOf(confirmSignature.value);
+                var postedTagIndex = recvStr.indexOf("\x02");
+                var queryTagIndex = recvStr.indexOf("\x05");
+                var clearTagIndex = recvStr.indexOf("\x0c");
+
+                if (sigIndex > -1 && userInputArea.value != "") // 只对发送数据的用户弹窗
+                {
+                    var postFailedTagIndex = recvStr.indexOf("\x03");
+                    if (postFailedTagIndex != -1) // 若署名已存在，张贴失败
+                    {
+                        $('#noticePostFailedModal').modal('show');
+                        return;
+                    }
+
+                    if (postedTagIndex != -1 && sigIndex < postedTagIndex) // 张贴成功
+                    {
+                        if (0) // XXX: 本地测试时改成0
+                        {
+                            emailjs.send("yahoo", "template_yPqHS84K",
+                                {
+                                    "Time": year + "年" + month + "月" + date + "日 " +
+                                        hour + "时" + minute + "分" + second + "秒" + millisecond + "毫秒 " +
+                                        "(UTC " + -nowtime.getTimezoneOffset() / 60 + "时区)",
+                                    "signature": confirmSignature.value,
+                                    "abstractcontent": confirmContent.value.substr(0, 20),
+                                    "content": confirmContent.value,
+                                    "deviceID": thisDeviceID,
+                                    "ejs_dashboard__test_template": true
+                                }).then(function (response) {
+                                    console.log('SUCCESS!', response.status, response.text);
+                                }, function (error) {
+                                    console.log('FAILED...', error);
+                                });
+                        }
+                        $('#noticePostedModal').modal('show');
+                    }
+                    else if (queryTagIndex != -1 && sigIndex < queryTagIndex) // 查询成功
+                    {
+                        queryResult.value = recvStr.substr(recvStr.indexOf("\x05") + 1, recvStr.length);
+                        $('#queryResultModal').modal('show');
+                    }
+                    else if (clearTagIndex != -1 && sigIndex < clearTagIndex) // 清屏成功
+                    {
+                        $('#clearConfirmedModal').modal('show');
+                    }
+                }
+            }
+        }
+
+        var usrCloud = new UsrCloud();
+        //定义回调
+        var callback = {
+            USR_onConnAck: USR_onConnAck,
+            USR_onConnLost: USR_onConnLost,
+            USR_onSubscribeAck: USR_onSubscribeAck,
+            USR_onUnSubscribeAck: USR_onUnSubscribeAck,
+            USR_onRcvRawFromDev: USR_onRcvRawFromDev
+        };
+        //初始化
+        usrCloud.Usr_Init("127.0.0.1", 443, 2, callback); // 因为是演示，所以不会去访问usr的服务器
+        emailjs.init("");
+        /**
+         * 订阅设备原始数据流（云交换机）
+         */
+        function subscribeDevRaw() {
+            usrCloud.USR_SubscribeDevRaw(thisDeviceID);
+        }
+
+        /**
+         * 取消订阅设备原始数据流（云交换机）
+         */
+        function unSubscribeDevRaw() {
+            var result;
+            result = usrCloud.USR_UnSubscribeDevRaw(thisDeviceID);
+        }
+
+        /**
+         * 发送原始数据流（云交换机）
+         */
+        function publishRawToDev() {
+            if (confirmSignature.value.length < 1) {
+                $('#signatureError').modal('show');
+                return;
+            }
+            if (confirmContent.value.length < 1) {
+                $('#contentError').modal('show');
+                return;
+            }
+            var payload;
+            userInputArea.value = userInputArea.value.replace(/[^\x20-\x7E]/g, ''); // 排除非ASCII字符
+            msgInputArea.value = msgInputArea.value.replace(/[^\x20-\x7E]/g, ''); // 排除非ASCII字符
+            // 0x02张贴 0x05查询 0x0c清除
+            var commandCode = 0;
+            if (confirmSignature.value == "admin" && confirmContent.value == "/clear all") // 清屏
+            {
+                payload = month + date + hour + minute + timezone + ":" + confirmSignature.value + "\x0c" + " pushed command: /clear all";
+                commandCode = 3;
+            }
+            else if (confirmContent.value == "/query notices")  // 查询
+            {
+                payload = month + date + hour + minute + timezone + ":" + confirmSignature.value + "\x05" + " pushed command: /query notices";
+                commandCode = 2;
+            }
+            else //张贴
+            {
+                payload = month + date + hour + minute + timezone + ":" + confirmSignature.value + "\x02" + confirmContent.value;
+                commandCode = 1;
+            }
+            var dataByte = [];
+            //获取消息UTF-8编码字节长度并创建Uint8Array字节数组
+            for (var i = 0; i < payload.length; i++) {
+                dataByte[i] = payload.charCodeAt(i);
+            }
+            stringToUTF8(payload, dataByte, 0);
+            var result;
+            result = usrCloud.USR_PublishRawToDev(thisDeviceID, dataByte);
+            if (result !== 0) // 发送失败
+            {
+                addConsoleNotice("发送失败。 (错误代码:" + result + ")");
+                $('#connectErrorModal').modal('show');
+            }
+            else  // 发送成功
+            {
+                addConsoleNotice("已发送字符串:\"" + payload + "\" ( 原始数据的十六进制码为:" + stringToHex(payload) + " )");
+                sendCount++;
+                refreshCounter();
+
+                if (commandCode == 1) {
+                    $('#noticeSentModal').modal('show');
+                }
+                else if (commandCode == 2) {
+                    $('#queryCommandSend').modal('show');
+                }
+                else if (commandCode == 3) {
+                    $('#clearCommandSend').modal('show');
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>

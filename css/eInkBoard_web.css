@@ -1,0 +1,142 @@
+.my-navbar-fixed-top {
+    color: white;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 40;
+    background-color: transparent !important;
+    transition: box-shadow 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+.my-navbar-fixed-top-show {
+    background-color: #2196f3 !important;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.14), 0 4px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+.my-navbar-brand {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    -ms-flex-align: center;
+    align-items: center;
+    color: transparent !important;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    height: 2.25rem;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.5s ease-in-out;
+}
+
+.my-navbar-brand-show {
+    color: inherit !important;
+    transition: color 0.5s ease-in-out;
+}
+
+.my-banner {
+    background-color: #2196f3;
+    background-image: url(../banner.JPG);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+    padding-top: 7rem;
+    margin-bottom: 3rem !important;
+}
+
+.my-color-text {
+    color: #2196f3 !important;
+}
+
+.my-color-text-light {
+    color: #03a9f4 !important;
+}
+
+.my-color-text-dark {
+    color: #2962ff !important;
+}
+
+.my-color-bg {
+    background-color: #2196f3 !important;
+}
+
+.my-color-bg-botton {
+    background-color: #03a9f4;
+}
+
+.my-btn-secondary {
+    background-color: #03a9f4;
+    color: white;
+}
+
+.my-btn-secondary:active, .my-btn-secondary:focus, .my-btn-secondary:hover {
+    color: white;
+}
+
+.my-btn-secondary.active, .my-btn-secondary:active {
+    background-color: #2962ff;
+}
+
+.my-btn-secondary.disabled, .my-btn-secondary:disabled {
+    background-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.26);
+}
+
+.my-title {
+    font-size: 3.5rem;
+    font-weight: 400;
+    letter-spacing: -.02em;
+    line-height: 1.035715;
+}
+
+.my-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: .02em;
+    line-height: 1.4;
+}
+
+.my-title-widescreen {
+    font-size: 10vw;
+    font-weight: 300;
+    letter-spacing: -.04em;
+    line-height: 1;
+}
+
+.my-subtitle-widescreen {
+    font-size: 2vw;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+}
+
+.my-state-bgcolor {
+    background-color: #ffc400 !important;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.my-state-bgcolor-connected {
+    background-color: #4db6ac !important;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.my-state-bgcolor-connectFailed {
+    background-color: #f44336 !important;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.my-techReport {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.my-techReport-widescreen {
+    width: 66%;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+}
